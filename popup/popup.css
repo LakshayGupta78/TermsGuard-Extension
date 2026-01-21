@@ -384,116 +384,112 @@ header {
   line-height: 1.6;
 }
 
+/* Updated Risk Cards to match specific design */
 .risks-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.risk-section {
-  background: var(--bg-secondary);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.risk-section-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-}
-
-.risk-section.high .risk-section-header {
-  background: var(--danger-bg);
-}
-
-.risk-section.medium .risk-section-header {
-  background: var(--warning-bg);
-}
-
-.risk-section.low .risk-section-header {
-  background: var(--success-bg);
-}
-
-.risk-section-icon {
-  font-size: 12px;
-}
-
-.risk-section-header h3 {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-  flex: 1;
-}
-
-.risk-section.high .risk-section-header h3 { color: var(--danger); }
-.risk-section.medium .risk-section-header h3 { color: var(--warning); }
-.risk-section.low .risk-section-header h3 { color: var(--success); }
-
-.risk-count {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.risk-section.high .risk-count { 
-  background: var(--danger);
-  color: white;
-}
-.risk-section.medium .risk-count { 
-  background: var(--warning);
-  color: black;
-}
-.risk-section.low .risk-count { 
-  background: var(--success);
-  color: white;
-}
-
-.risk-items {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  padding: 0 4px;
 }
 
 .risk-item {
-  padding: 12px 14px;
-  border-radius: 10px;
-  border-left: 3px solid;
-  transition: transform 0.2s ease;
+  position: relative;
+  padding: 16px;
+  background: #141416;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: none; /* Reset previous border */
 }
 
-.risk-item:hover {
-  transform: translateX(2px);
+/* Colored strip on the left with glow */
+.risk-item::before {
+  content: '';
+  position: absolute;
+  top: 4px; /* Small gap from top/bottom for pill look */
+  bottom: 4px;
+  left: 4px;
+  width: 4px;
+  border-radius: 4px;
 }
 
+/* Specific Severity Styles */
 .risk-item.high {
-  background: rgba(239, 68, 68, 0.08);
-  border-color: var(--danger);
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), rgba(20, 20, 22, 1) 40%);
+}
+
+.risk-item.high::before {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+.risk-item.high .risk-text {
+  color: #fca5a5;
+  text-shadow: 0 0 1px rgba(239, 68, 68, 0.3);
 }
 
 .risk-item.medium {
-  background: rgba(245, 158, 11, 0.08);
-  border-color: var(--warning);
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.15), rgba(20, 20, 22, 1) 40%);
+}
+
+.risk-item.medium::before {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.risk-item.medium .risk-text {
+  color: #fcd34d;
+  text-shadow: 0 0 1px rgba(245, 158, 11, 0.3);
 }
 
 .risk-item.low {
-  background: rgba(34, 197, 94, 0.08);
-  border-color: var(--success);
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), rgba(20, 20, 22, 1) 40%);
+}
+
+.risk-item.low::before {
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+.risk-item.low .risk-text {
+  color: #86efac;
+  text-shadow: 0 0 1px rgba(34, 197, 94, 0.3);
+}
+
+/* Icon (Orb) Styles */
+.risk-icon-orb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+}
+
+.risk-item.high .risk-icon-orb {
+  background: radial-gradient(circle at 30% 30%, #ff8888, #ef4444);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+}
+
+.risk-item.medium .risk-icon-orb {
+  background: radial-gradient(circle at 30% 30%, #ffde88, #f59e0b);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+}
+
+.risk-item.low .risk-icon-orb {
+  background: radial-gradient(circle at 30% 30%, #88ffaa, #22c55e);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
 }
 
 .risk-text {
   font-size: 13px;
-  color: var(--text-primary);
-  line-height: 1.5;
+  font-weight: 500;
+  line-height: 1.4;
   margin: 0;
 }
+
+
 
 .no-risks {
   padding: 24px;

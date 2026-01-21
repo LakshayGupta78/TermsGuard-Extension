@@ -164,74 +164,27 @@ function renderResults(analysis) {
     `;
   }
 
-  // Risks - grouped by severity like the website
+  // Risks
   if (analysis.risks && analysis.risks.length > 0) {
-    // Group risks by severity
-    const highRisks = analysis.risks.filter(r => (r.severity || '').toLowerCase() === 'high');
-    const mediumRisks = analysis.risks.filter(r => (r.severity || '').toLowerCase() === 'medium');
-    const lowRisks = analysis.risks.filter(r => (r.severity || '').toLowerCase() === 'low');
-
     html += '<div class="risks-container">';
+    
+    // Sort logic: High -> Medium -> Low
+    const severityMap = { high: 0, medium: 1, low: 2 };
+    const sortedRisks = [...analysis.risks].sort((a, b) => {
+      const aSev = (a.severity || 'low').toLowerCase();
+      const bSev = (b.severity || 'low').toLowerCase();
+      return (severityMap[aSev] ?? 2) - (severityMap[bSev] ?? 2); 
+    });
 
-    // High Risk Section
-    if (highRisks.length > 0) {
+    sortedRisks.forEach(risk => {
+      const severity = (risk.severity || 'low').toLowerCase();
       html += `
-        <div class="risk-section high">
-          <div class="risk-section-header">
-            <span class="risk-section-icon">🔴</span>
-            <h3>High Risk</h3>
-            <span class="risk-count">${highRisks.length}</span>
-          </div>
-          <div class="risk-items">
-            ${highRisks.map(risk => `
-              <div class="risk-item high">
-                <p class="risk-text">${risk.description}</p>
-              </div>
-            `).join('')}
-          </div>
+        <div class="risk-item ${severity}">
+          <div class="risk-icon-orb"></div>
+          <p class="risk-text">${risk.description}</p>
         </div>
       `;
-    }
-
-    // Medium Risk Section
-    if (mediumRisks.length > 0) {
-      html += `
-        <div class="risk-section medium">
-          <div class="risk-section-header">
-            <span class="risk-section-icon">🟡</span>
-            <h3>Medium Risk</h3>
-            <span class="risk-count">${mediumRisks.length}</span>
-          </div>
-          <div class="risk-items">
-            ${mediumRisks.map(risk => `
-              <div class="risk-item medium">
-                <p class="risk-text">${risk.description}</p>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    // Low Risk Section
-    if (lowRisks.length > 0) {
-      html += `
-        <div class="risk-section low">
-          <div class="risk-section-header">
-            <span class="risk-section-icon">🟢</span>
-            <h3>Low Risk</h3>
-            <span class="risk-count">${lowRisks.length}</span>
-          </div>
-          <div class="risk-items">
-            ${lowRisks.map(risk => `
-              <div class="risk-item low">
-                <p class="risk-text">${risk.description}</p>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
+    });
 
     html += '</div>';
   } else {
