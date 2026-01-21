@@ -10,9 +10,11 @@
   <div class="container">
     <header>
       <div class="logo">
-        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-        </svg>
+        <div class="logo-icon-wrapper">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
         <span>TermsGuard</span>
       </div>
     </header>
@@ -20,7 +22,13 @@
     <main>
       <!-- Initial State -->
       <div id="initial-state" class="state">
-        <p class="description">Scan this page for risky clauses and get a plain English summary.</p>
+        <div class="initial-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h2 class="initial-title">Analyze This Page</h2>
+        <p class="description">Scan for risky clauses and get a plain English summary of terms and policies.</p>
         <button id="scan-btn" class="btn-primary">
           <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -31,26 +39,74 @@
 
       <!-- Loading State -->
       <div id="loading-state" class="state hidden">
-        <div class="spinner"></div>
-        <p>Analyzing page content...</p>
+        <div class="loading-animation">
+          <div class="shield-loader">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+        </div>
+        <p class="loading-text">Analyzing page content...</p>
+        <p class="loading-subtext">This may take a few seconds</p>
       </div>
 
       <!-- Results State -->
       <div id="results-state" class="state hidden">
+        <!-- Risk Rank Section -->
+        <div id="risk-rank-section" class="risk-rank-section">
+          <div class="risk-gauge">
+            <div class="risk-gauge-ring">
+              <svg viewBox="0 0 36 36">
+                <circle class="gauge-bg" cx="18" cy="18" r="16" fill="none" stroke-width="3"/>
+                <circle id="gauge-fill" class="gauge-fill" cx="18" cy="18" r="16" fill="none" stroke-width="3" 
+                  stroke-dasharray="100 100" stroke-dashoffset="100"/>
+              </svg>
+            </div>
+            <div class="risk-gauge-content">
+              <span id="risk-score" class="risk-score">--</span>
+              <span class="risk-label">Risk Score</span>
+            </div>
+          </div>
+          <div id="risk-level" class="risk-level">
+            <span class="risk-level-badge">Analyzing...</span>
+          </div>
+        </div>
+
         <div id="results-content"></div>
-        <button id="rescan-btn" class="btn-secondary">Scan Again</button>
+        
+        <button id="rescan-btn" class="btn-secondary">
+          <svg class="btn-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Scan Again
+        </button>
       </div>
 
       <!-- Error State -->
       <div id="error-state" class="state hidden">
-        <div class="error-icon">⚠️</div>
-        <p id="error-message">Something went wrong</p>
-        <button id="retry-btn" class="btn-secondary">Try Again</button>
+        <div class="error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <h3 class="error-title">Something went wrong</h3>
+        <p id="error-message" class="error-text">Unable to analyze this page</p>
+        <button id="retry-btn" class="btn-secondary">
+          <svg class="btn-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Try Again
+        </button>
       </div>
     </main>
 
     <footer>
-      <p>Your data is not stored or used for AI training</p>
+      <div class="footer-content">
+        <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+        <p>Your data is not stored or used for AI training</p>
+      </div>
     </footer>
   </div>
 

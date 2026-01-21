@@ -2,7 +2,7 @@
 // Uses backend proxy for secure API calls
 
 // ⚠️ IMPORTANT: Set this to your deployed website URL
-const API_URL = 'https://your-website-url.vercel.app/api/extension-analyze';
+const API_URL = 'https://terms-guard-website.vercel.app/api/extension-analyze';
 
 // DOM Elements
 const initialState = document.getElementById('initial-state');
@@ -15,6 +15,12 @@ const errorMessage = document.getElementById('error-message');
 const scanBtn = document.getElementById('scan-btn');
 const rescanBtn = document.getElementById('rescan-btn');
 const retryBtn = document.getElementById('retry-btn');
+
+// Risk gauge elements
+const riskRankSection = document.getElementById('risk-rank-section');
+const gaugeFill = document.getElementById('gauge-fill');
+const riskScore = document.getElementById('risk-score');
+const riskLevel = document.getElementById('risk-level');
 
 // State management
 function showState(state) {
@@ -88,9 +94,65 @@ async function analyzeWithBackend(pageContent) {
   return response.json();
 }
 
+// Calculate overall risk score based on risks
+function calculateRiskScore(risks) {
+  if (!risks || risks.length === 0) {
+    return { score: 0, level: 'low', label: 'Low Risk' };
+  }
+
+  // Weight for each severity level
+  const weights = { high: 30, medium: 15, low: 5 };
+  let totalScore = 0;
+
+  risks.forEach(risk => {
+    const severity = (risk.severity || 'low').toLowerCase();
+    totalScore += weights[severity] || 5;
+  });
+
+  // Cap at 100
+  totalScore = Math.min(totalScore, 100);
+
+  // Determine level
+  let level, label;
+  if (totalScore >= 60) {
+    level = 'high';
+    label = 'High Risk';
+  } else if (totalScore >= 30) {
+    level = 'medium';
+    label = 'Medium Risk';
+  } else {
+    level = 'low';
+    label = 'Low Risk';
+  }
+
+  return { score: totalScore, level, label };
+}
+
+// Update the risk gauge display
+function updateRiskGauge(riskData) {
+  const { score, level, label } = riskData;
+  
+  // Update score display
+  riskScore.textContent = score;
+  riskScore.className = `risk-score ${level}`;
+  
+  // Update gauge ring (circumference = 2 * π * 16 ≈ 100.53, we use 100 for simplicity)
+  const circumference = 100;
+  const offset = circumference - (score / 100) * circumference;
+  gaugeFill.style.strokeDashoffset = offset;
+  gaugeFill.className = `gauge-fill ${level}`;
+  
+  // Update level badge
+  riskLevel.innerHTML = `<span class="risk-level-badge ${level}">${label}</span>`;
+}
+
 // Render results
 function renderResults(analysis) {
   let html = '';
+
+  // Calculate and display risk score
+  const riskData = calculateRiskScore(analysis.risks);
+  updateRiskGauge(riskData);
 
   // Summary
   if (analysis.summary) {
@@ -108,15 +170,20 @@ function renderResults(analysis) {
     
     // Sort by severity
     const severityOrder = { high: 0, medium: 1, low: 2 };
-    analysis.risks.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+    analysis.risks.sort((a, b) => {
+      const aSev = (a.severity || 'low').toLowerCase();
+      const bSev = (b.severity || 'low').toLowerCase();
+      return severityOrder[aSev] - severityOrder[bSev];
+    });
     
     analysis.risks.forEach(risk => {
-      const icon = risk.severity === 'high' ? '🔴' : risk.severity === 'medium' ? '🟡' : '🟢';
+      const severity = (risk.severity || 'low').toLowerCase();
+      const icon = severity === 'high' ? '🔴' : severity === 'medium' ? '🟡' : '🟢';
       html += `
-        <div class="risk-item ${risk.severity}">
+        <div class="risk-item ${severity}">
           <div class="risk-header">
-            <span>${icon}</span>
-            <span class="risk-severity">${risk.severity}</span>
+            <span class="risk-icon">${icon}</span>
+            <span class="risk-severity">${severity}</span>
           </div>
           <p class="risk-text">${risk.description}</p>
         </div>
